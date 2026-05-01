@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - Smart Task and Productivity API</title>
+    <link rel = "stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>TaskFlow Dashboard</h1>
+
+    <div class="card">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="password">
+        <button onclick="login()">Login</button>
+    </div>
+
+    <div class="card">
+        <h2>Create Task</h2>
+        <input type="text" id="title" placeholder="Task Title">
+        <input type="text" id="description" placeholder="Description">
+        <input type="date" id="due_date" placeholder="Due Date">
+        <button onclick="createTask()">Add Task</button>
+    </div>
+
+    <div class="card">
+        <h2>Tasks</h2>
+        <button onclick="getTasks()">Refresh</button>
+        <ul id="taskList"></ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
