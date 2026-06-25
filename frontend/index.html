@@ -1,36 +1,224 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskFlow - Smart Task and Productivity API</title>
-    <link rel = "stylesheet" href="style.css">
+    <title>TaskFlow — Streamlined Productivity</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <h1>TaskFlow Dashboard</h1>
+    <!-- Top Header Navbar -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <i data-lucide="compass" class="logo-icon"></i>
+                <span class="logo-text">TaskFlow</span>
+            </div>
+            
+            <div class="header-actions">
+                <button id="theme-toggle" class="icon-btn" title="Toggle Theme" aria-label="Toggle Theme">
+                    <i data-lucide="moon" class="theme-icon-dark"></i>
+                    <i data-lucide="sun" class="theme-icon-light" style="display: none;"></i>
+                </button>
+                <div id="user-profile" class="user-profile" style="display: none;">
+                    <span id="user-badge" class="user-avatar">U</span>
+                    <span id="user-display-name" class="user-name">User</span>
+                    <button onclick="logout()" class="logout-btn" title="Sign Out">
+                        <i data-lucide="log-out"></i>
+                        <span>Sign Out</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
 
-    <div class="card">
-        <h2>Login</h2>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="password">
-        <button onclick="login()">Login</button>
-    </div>
+    <!-- Main Content Wrapper -->
+    <main class="main-container">
+        
+        <!-- AUTHENTICATION CONTAINER (Tabs for Log In / Register) -->
+        <section id="auth-container" class="auth-section">
+            <div class="auth-card">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Log In</button>
+                    <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Sign Up</button>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="login-form" class="auth-form" onsubmit="event.preventDefault(); login();">
+                    <h2 class="form-title">Welcome Back</h2>
+                    <p class="form-subtitle">Enter your credentials to access your workspace.</p>
+                    
+                    <div class="input-group">
+                        <label for="username"><i data-lucide="user" class="input-icon"></i> Username</label>
+                        <input type="text" id="username" placeholder="johndoe" required autocomplete="username">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="password"><i data-lucide="lock" class="input-icon"></i> Password</label>
+                        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+                    </div>
+                    
+                    <button type="submit" id="btn-login" class="btn primary-btn">
+                        <span>Log In</span>
+                        <i data-lucide="arrow-right" class="btn-arrow"></i>
+                    </button>
+                </form>
 
-    <div class="card">
-        <h2>Create Task</h2>
-        <input type="text" id="title" placeholder="Task Title">
-        <input type="text" id="description" placeholder="Description">
-        <input type="date" id="due_date" placeholder="Due Date">
-        <button onclick="createTask()">Add Task</button>
-    </div>
+                <!-- Registration Form -->
+                <form id="register-form" class="auth-form" onsubmit="event.preventDefault(); register();" style="display: none;">
+                    <h2 class="form-title">Create Account</h2>
+                    <p class="form-subtitle">Join TaskFlow today to start tracking your goals.</p>
+                    
+                    <div class="input-group">
+                        <label for="reg-name"><i data-lucide="smile" class="input-icon"></i> Full Name</label>
+                        <input type="text" id="reg-name" placeholder="John Doe" required autocomplete="name">
+                    </div>
 
-    <div class="card">
-        <h2>Tasks</h2>
-        <button onclick="getTasks()">Refresh</button>
-        <ul id="taskList"></ul>
-    </div>
+                    <div class="input-group">
+                        <label for="reg-email"><i data-lucide="mail" class="input-icon"></i> Email Address</label>
+                        <input type="email" id="reg-email" placeholder="john@example.com" required autocomplete="email">
+                    </div>
 
+                    <div class="input-group">
+                        <label for="reg-username"><i data-lucide="user" class="input-icon"></i> Username</label>
+                        <input type="text" id="reg-username" placeholder="johndoe" required autocomplete="username">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="reg-password"><i data-lucide="lock" class="input-icon"></i> Password</label>
+                        <input type="password" id="reg-password" placeholder="••••••••" required autocomplete="new-password">
+                    </div>
+                    
+                    <button type="submit" id="btn-register" class="btn primary-btn">
+                        <span>Create Account</span>
+                        <i data-lucide="user-plus" class="btn-arrow"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- DASHBOARD CONTAINER (Shown when authenticated) -->
+        <section id="dashboard-container" class="dashboard-section" style="display: none;">
+            
+            <!-- Summary stats row -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper blue">
+                        <i data-lucide="layers"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Total Tasks</span>
+                        <h3 id="stat-total" class="stat-value">0</h3>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper orange">
+                        <i data-lucide="clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Pending</span>
+                        <h3 id="stat-pending" class="stat-value">0</h3>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper green">
+                        <i data-lucide="check-circle-2"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-label">Completed</span>
+                        <h3 id="stat-completed" class="stat-value">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two column layout -->
+            <div class="dashboard-grid">
+                
+                <!-- Left panel: Task creation -->
+                <div class="panel-left">
+                    <div class="glass-card sticky-panel">
+                        <div class="card-header">
+                            <i data-lucide="plus-circle" class="card-icon indigo-text"></i>
+                            <h2>Create New Task</h2>
+                        </div>
+                        
+                        <form id="create-task-form" onsubmit="event.preventDefault(); addTask();">
+                            <div class="input-group">
+                                <label for="title">Task Title</label>
+                                <input type="text" id="title" placeholder="What needs to be done?" required>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="desc">Description</label>
+                                <textarea id="desc" placeholder="Add some details..." rows="3" maxlength="100"></textarea>
+                                <div class="char-counter"><span id="desc-char-count">0</span> / 100</div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="due_date">Due Date</label>
+                                <input type="date" id="due_date">
+                            </div>
+                            
+                            <button type="submit" id="btn-add-task" class="btn success-btn">
+                                <i data-lucide="sparkles"></i>
+                                <span>Add Task</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right panel: Task list and controls -->
+                <div class="panel-right">
+                    <!-- Control bar (search, filters, refresh) -->
+                    <div class="list-controls-card">
+                        <div class="search-box">
+                            <i data-lucide="search" class="search-icon"></i>
+                            <input type="text" id="search-input" placeholder="Search tasks..." oninput="filterTasks()">
+                            <button id="search-clear-btn" class="clear-btn" style="display: none;" onclick="clearSearch()">
+                                <i data-lucide="x"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="filter-controls">
+                            <div class="pill-tabs">
+                                <button class="pill-tab active" id="filter-all" onclick="setFilter('all')">All</button>
+                                <button class="pill-tab" id="filter-pending" onclick="setFilter('pending')">Pending</button>
+                                <button class="pill-tab" id="filter-completed" onclick="setFilter('completed')">Completed</button>
+                            </div>
+                            
+                            <button onclick="getTasks()" class="refresh-btn" title="Refresh List">
+                                <i data-lucide="rotate-cw" id="refresh-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Task cards display container -->
+                    <div id="task-cards-list" class="task-cards-container">
+                        <!-- Task cards will be loaded here dynamically -->
+                        <div class="empty-state">
+                            <i data-lucide="inbox" class="empty-icon"></i>
+                            <p>Loading your tasks...</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast Notifications Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main JavaScript Logic -->
     <script src="script.js"></script>
 </body>
 </html>

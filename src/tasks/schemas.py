@@ -27,7 +27,7 @@ class TaskResponseSchema(BaseModel):
     desc : str
     status : StatusEnum 
     due_date : date | None
-    user_id : int | None
+    user_id : int 
 
 class APIResponseSchema(BaseModel):
     message : str
